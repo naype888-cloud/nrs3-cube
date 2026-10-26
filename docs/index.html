@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NRS³ Cube</title>
+<meta name="description" content="The open cube of three path graphs: C_Nava, the excess δ, the NRS angle and the volumetric quantum for any Nx, Ny, Nz, with the Physlib pull requests merged for it.">
+<style>
+:root {
+  --bg: #fcfcfb; --panel: #ffffff; --fg: #0b0b0b; --mut: #52514e; --line: #e4e3df;
+  --accent: #2a78d6; --warm: #eb6834; --ok: #1f7a4d; --code: #f1f0ec;
+  --sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #111110; --panel: #191918; --fg: #f2f1ee; --mut: #c4c3bf; --line: #2c2b29;
+  --accent: #5b9be6; --warm: #f08a5d; --ok: #5cc98f; --code: #1f1f1d; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #111110; --panel: #191918; --fg: #f2f1ee; --mut: #c4c3bf; --line: #2c2b29;
+  --accent: #5b9be6; --warm: #f08a5d; --ok: #5cc98f; --code: #1f1f1d; color-scheme: dark }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.55 var(--sans); }
+a { color: var(--accent); }
+.wrap { max-width: 1080px; margin: 0 auto; padding: 28px 16px 56px; display: grid; gap: 28px; }
+h1, h2 { margin: 0; line-height: 1.15; text-wrap: balance; }
+h1 { font-size: clamp(1.9rem, 4vw, 2.6rem); }
+h2 { font-size: 1.3rem; }
+p { margin: 0; max-width: 68ch; }
+.eyebrow { font: 600 .74rem/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--mut); }
+header { display: grid; gap: 10px; }
+.mut { color: var(--mut); }
+code { font-family: var(--mono); font-size: .86em; background: var(--code); padding: 1px 5px; border-radius: 4px; }
+.controls, .plot { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
+.controls { display: grid; gap: 12px; }
+.row { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; }
+.row label { font-weight: 600; min-width: 3ch; }
+input[type=range] { flex: 1 1 260px; min-width: 0; accent-color: var(--accent); }
+.val { font-family: var(--mono); min-width: 10ch; font-variant-numeric: tabular-nums; }
+.readouts { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); background: var(--panel); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.ro { padding: 12px 14px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); display: grid; gap: 2px; min-width: 0; }
+.ro .k { font: 600 .72rem var(--mono); color: var(--mut); }
+.ro .v { font: 500 1.05rem var(--mono); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.ro .u { font-size: .8rem; color: var(--mut); }
+.ro.hot .v { color: var(--warm); }
+.ro.ok .v { color: var(--ok); }
+svg { width: 100%; height: auto; display: block; }
+svg text { font: 11px var(--mono); fill: var(--mut); }
+.plots { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 480px), 1fr)); gap: 18px; }
+.cap { font: .78rem var(--mono); color: var(--mut); padding: 6px 2px 0; }
+table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font: 600 .74rem var(--mono); color: var(--mut); text-transform: uppercase; letter-spacing: .05em; }
+.tw { overflow-x: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; }
+.figs { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 14px; }
+.figs img { width: 100%; height: auto; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <span class="eyebrow">NRS³ · mosaic</span>
+  <h1>NRS³ Cube</h1>
+  <p>The open cube <code>Nx × Ny × Nz</code>: three path graphs, one conjugate pair <code>(T, P)</code> per axis, axes commuting. Each axis has its own <code>C_Nava(N)</code>; it is <code>1</code> only for <code>N = 2, 3</code>. The volumetric quantum is the product of the three excesses <code>δ = C_Nava − 1</code>.</p>
+  <p class="mut">Closed form (Physlib #1732): <code>Var H = 4t² sin²θ (N−1)/(N+1)</code>, <code>Var X = a²(((N+1)²+2)/12 − 1/(2 sin²θ))</code>, <code>θ = π/(N+1)</code>, and <code>C_Nava² = Var H · Var X / cos²θ</code> in units <code>a = t = 1</code>. Limit: <code>C∞ = √(π²/3 − 2)</code>.</p>
+</header>
+
+<section class="controls" aria-label="Cube size">
+  <div class="row"><label for="nx">Nx</label><input id="nx" type="range" min="2" max="60" value="4"><span class="val" id="vx"></span></div>
+  <div class="row"><label for="ny">Ny</label><input id="ny" type="range" min="2" max="60" value="4"><span class="val" id="vy"></span></div>
+  <div class="row"><label for="nz">Nz</label><input id="nz" type="range" min="2" max="60" value="4"><span class="val" id="vz"></span></div>
+</section>
+
+<section class="readouts" id="ro" aria-live="polite"></section>
+
+<section class="plots">
+  <div class="plot"><svg id="p1" viewBox="0 0 520 300" role="img" aria-label="C_Nava against N"></svg><div class="cap">C_Nava(N) against N, with the Szegő limit C∞ (dashed). Your three axes are marked.</div></div>
+  <div class="plot"><svg id="p2" viewBox="0 0 520 300" role="img" aria-label="Volumetric quantum for a cubic box"></svg><div class="cap">Volumetric quantum δ(N)³ of the cube N × N × N, log scale; zero at N = 2, 3.</div></div>
+</section>
+
+<section>
+  <h2>Merged in Physlib</h2>
+  <div class="tw"><table>
+    <tr><th>PR</th><th>What</th><th>Lean</th></tr>
+    <tr><td><a href="https://github.com/leanprover-community/physlib/pull/1725">#1725</a></td><td>the open cube; axes commute; <code>C_Nava</code> per axis</td><td><code>nava_robertson_schrodinger_cube</code></td></tr>
+    <tr><td><a href="https://github.com/leanprover-community/physlib/pull/1739">#1739</a></td><td>Mandelstam–Tamm, Cramér–Rao per axis; ratio <code>1/C_Nava²</code></td><td><code>Cube/MandelstamTamm</code></td></tr>
+    <tr><td><a href="https://github.com/leanprover-community/physlib/pull/1730">#1730</a></td><td>Robertson 1934 for several observables</td><td><code>robertson_det</code></td></tr>
+    <tr><td><a href="https://github.com/leanprover-community/physlib/pull/1742">#1742</a></td><td>det|NRS³: six observables; strict from 4 × 4 × 4</td><td><code>robertson_det_cube</code>, <code>robertson_det_maxCurrentCubeState_strict</code></td></tr>
+    <tr><td><a href="https://github.com/leanprover-community/physlib/pull/1756">#1756</a></td><td>NRS angle and volumetric quantum</td><td><code>Cube/VolumetricQuantum</code></td></tr>
+    <tr><td><a href="https://github.com/leanprover-community/physlib/pull/1774">#1774</a></td><td>equality case of Robertson, several observables</td><td></td></tr>
+    <tr><td><a href="https://github.com/leanprover-community/physlib/pull/1745">#1745</a>, <a href="https://github.com/leanprover-community/physlib/pull/1746">#1746</a></td><td>velocity band and its width</td><td><code>VelocityBand</code></td></tr>
+  </table></div>
+  <p class="mut" style="margin-top:10px">Full list: <a href="https://github.com/leanprover-community/physlib/pulls?q=is%3Apr+is%3Amerged+author%3Anaype888-cloud">merged pull requests</a> · base repository <a href="https://github.com/naype888-cloud/nava-robertson-schrodinger">nava-robertson-schrodinger</a> (<code>D37</code>–<code>D49t</code>).</p>
+</section>
+
+<section>
+  <h2>Figures</h2>
+  <div class="figs">
+    <img src="figures/nrs3_star_4x4x4.png" alt="Star of the 4 by 4 by 4 cube">
+    <img src="figures/nrs3_pythagoras.png" alt="Pythagoras on the cube">
+    <img src="figures/nrs3_volumetric_quantum.png" alt="Volumetric quantum">
+    <img src="figures/nrs3_light_cone.png" alt="Light cone">
+    <img src="figures/nrs3_octahedron_hd.png" alt="Octahedron">
+  </div>
+</section>
+
+<p class="mut">Neighbours: <a href="https://naype888-cloud.github.io/nrs3-hopf/">nrs3-hopf</a> · <a href="https://naype888-cloud.github.io/nrs3-uncertainty-cone/">nrs3-uncertainty-cone</a> · <a href="https://naype888-cloud.github.io/nrs3-dark/">nrs3-dark</a> · <a href="https://naype888-cloud.github.io/nava-robertson-schrodinger/">base page</a></p>
+</div>
+<script>
+const CINF = Math.sqrt(Math.PI ** 2 / 3 - 2);
+function C(N) {
+  const th = Math.PI / (N + 1), s = Math.sin(th);
+  const vh = 4 * s * s * (N - 1) / (N + 1);
+  const vx = ((N + 1) ** 2 + 2) / 12 - 1 / (2 * s * s);
+  return N <= 3 ? 1 : Math.sqrt(vh * vx) / Math.cos(th);
+}
+const $ = id => document.getElementById(id);
+const fmt = (x, d = 5) => x === 0 ? "0" : (Math.abs(x) < 1e-4 ? x.toExponential(3) : x.toFixed(d));
+function svgPlot(el, pts, opts) {
+  const W = 520, H = 300, L = 48, R = 12, T = 12, B = 30;
+  const xs = pts.map(p => p[0]), ys = pts.map(p => p[1]);
+  const x0 = Math.min(...xs), x1 = Math.max(...xs);
+  const y0 = opts.y0, y1 = opts.y1;
+  const X = x => L + (x - x0) / (x1 - x0) * (W - L - R);
+  const Y = y => H - B - (y - y0) / (y1 - y0) * (H - T - B);
+  let s = `<line x1="${L}" y1="${H - B}" x2="${W - R}" y2="${H - B}" stroke="currentColor" opacity=".3"/><line x1="${L}" y1="${T}" x2="${L}" y2="${H - B}" stroke="currentColor" opacity=".3"/>`;
+  s += `<polyline fill="none" stroke="var(--accent)" stroke-width="2" points="${pts.map(p => X(p[0]) + "," + Y(p[1])).join(" ")}"/>`;
+  (opts.hlines || []).forEach(h => { s += `<line x1="${L}" x2="${W - R}" y1="${Y(h.y)}" y2="${Y(h.y)}" stroke="var(--ok)" stroke-dasharray="5 4"/><text x="${W - R - 4}" y="${Y(h.y) - 4}" text-anchor="end">${h.label}</text>`; });
+  (opts.marks || []).forEach(m => { s += `<circle cx="${X(m[0])}" cy="${Y(m[1])}" r="5" fill="var(--warm)"/><text x="${X(m[0])}" y="${Y(m[1]) - 9}" text-anchor="middle">${m[2]}</text>`; });
+  s += `<text x="${L}" y="${H - 10}">${x0}</text><text x="${W - R}" y="${H - 10}" text-anchor="end">${x1}</text><text x="${L - 6}" y="${Y(y0)}" text-anchor="end">${opts.fy(y0)}</text><text x="${L - 6}" y="${Y(y1) + 8}" text-anchor="end">${opts.fy(y1)}</text>`;
+  el.innerHTML = s;
+}
+function update() {
+  const N = [+$("nx").value, +$("ny").value, +$("nz").value];
+  ["x", "y", "z"].forEach((a, i) => $("v" + a).textContent = "N = " + N[i]);
+  const c = N.map(C), d = c.map(v => Math.max(0, v - 1));
+  const V = d[0] * d[1] * d[2];
+  const th = c.map(v => Math.acos(Math.min(1, 1 / v)) * 180 / Math.PI);
+  const sat = N.map(n => n <= 3);
+  const cell = (k, v, u, cls = "") => `<div class="ro ${cls}"><span class="k">${k}</span><span class="v">${v}</span><span class="u">${u}</span></div>`;
+  $("ro").innerHTML =
+    cell("C_Nava per axis", c.map(v => v.toFixed(4)).join(" · "), "x · y · z") +
+    cell("δ = C − 1", d.map(v => fmt(v, 4)).join(" · "), "excess per axis") +
+    cell("NRS angle θ", th.map(v => v.toFixed(3) + "°").join(" · "), "arccos(1/C)") +
+    cell("volumetric quantum", fmt(V), "δx δy δz", V > 0 ? "hot" : "ok") +
+    cell("saturated axes", sat.map(s => s ? "yes" : "no").join(" · "), "equality iff N = 2, 3", sat.every(Boolean) ? "ok" : "") +
+    cell("strict det|NRS³", N.every(n => n >= 4) ? "yes" : "no", "from 4 × 4 × 4 (#1742)", N.every(n => n >= 4) ? "hot" : "");
+  const Nmax = 60, pts = [];
+  for (let n = 2; n <= Nmax; n++) pts.push([n, C(n)]);
+  svgPlot($("p1"), pts, { y0: 1, y1: 1.15, fy: v => v.toFixed(2), hlines: [{ y: CINF, label: "C∞ = " + CINF.toFixed(4) }], marks: N.map((n, i) => [n, C(n), "xyz"[i]]) });
+  const p2 = []; for (let n = 2; n <= Nmax; n++) p2.push([n, Math.log10(Math.max((C(n) - 1) ** 3, 1e-12))]);
+  svgPlot($("p2"), p2, { y0: -12, y1: -2, fy: v => "1e" + v, marks: [[N[0], Math.log10(Math.max((C(N[0]) - 1) ** 3, 1e-12)), "x"]] });
+}
+["nx", "ny", "nz"].forEach(id => $(id).addEventListener("input", update));
+update();
+</script>
+</body>
+</html>
