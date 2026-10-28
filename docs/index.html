@@ -4,154 +4,237 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>NRS³ Cube</title>
-<meta name="description" content="The open cube of three path graphs: C_Nava, the excess δ, the NRS angle and the volumetric quantum for any Nx, Ny, Nz, with the Physlib pull requests merged for it.">
+<meta name="description" content="Every box d_x × d_y × d_z has its own star of uncertainty. Change the box, watch the star deform in 3D, and let transport move the maximal current state of the cube through the lattice.">
 <style>
-:root {
-  --bg: #fcfcfb; --panel: #ffffff; --fg: #0b0b0b; --mut: #52514e; --line: #e4e3df;
-  --accent: #2a78d6; --warm: #eb6834; --ok: #1f7a4d; --code: #f1f0ec;
-  --sans: system-ui, -apple-system, "Segoe UI", sans-serif;
-  --mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
-}
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-  --bg: #111110; --panel: #191918; --fg: #f2f1ee; --mut: #c4c3bf; --line: #2c2b29;
-  --accent: #5b9be6; --warm: #f08a5d; --ok: #5cc98f; --code: #1f1f1d; color-scheme: dark } }
-:root[data-theme="dark"] {
-  --bg: #111110; --panel: #191918; --fg: #f2f1ee; --mut: #c4c3bf; --line: #2c2b29;
-  --accent: #5b9be6; --warm: #f08a5d; --ok: #5cc98f; --code: #1f1f1d; color-scheme: dark }
-* { box-sizing: border-box; }
-body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.55 var(--sans); }
-a { color: var(--accent); }
-.wrap { max-width: 1080px; margin: 0 auto; padding: 28px 16px 56px; display: grid; gap: 28px; }
-h1, h2 { margin: 0; line-height: 1.15; text-wrap: balance; }
-h1 { font-size: clamp(1.9rem, 4vw, 2.6rem); }
-h2 { font-size: 1.3rem; }
-p { margin: 0; max-width: 68ch; }
-.eyebrow { font: 600 .74rem/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--mut); }
-header { display: grid; gap: 10px; }
-.mut { color: var(--mut); }
-code { font-family: var(--mono); font-size: .86em; background: var(--code); padding: 1px 5px; border-radius: 4px; }
-.controls, .plot { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
-.controls { display: grid; gap: 12px; }
-.row { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; }
-.row label { font-weight: 600; min-width: 3ch; }
-input[type=range] { flex: 1 1 260px; min-width: 0; accent-color: var(--accent); }
-.val { font-family: var(--mono); min-width: 10ch; font-variant-numeric: tabular-nums; }
-.readouts { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); background: var(--panel); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
-.ro { padding: 12px 14px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); display: grid; gap: 2px; min-width: 0; }
-.ro .k { font: 600 .72rem var(--mono); color: var(--mut); }
-.ro .v { font: 500 1.05rem var(--mono); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
-.ro .u { font-size: .8rem; color: var(--mut); }
-.ro.hot .v { color: var(--warm); }
-.ro.ok .v { color: var(--ok); }
-svg { width: 100%; height: auto; display: block; }
-svg text { font: 11px var(--mono); fill: var(--mut); }
-.plots { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 480px), 1fr)); gap: 18px; }
-.cap { font: .78rem var(--mono); color: var(--mut); padding: 6px 2px 0; }
-table { width: 100%; border-collapse: collapse; font-size: .9rem; }
-th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
-th { font: 600 .74rem var(--mono); color: var(--mut); text-transform: uppercase; letter-spacing: .05em; }
-.tw { overflow-x: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; }
-.figs { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 14px; }
-.figs img { width: 100%; height: auto; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+  :root {
+    --bg: #f4f3ef; --panel: #ffffff; --ink: #0b0b0b; --ink2: #3b3a37; --muted: #67665f;
+    --grid: #c9c7c0; --blue: #1f63b8; --orange: #eb6834; --green: #2f8f5b; --red: #d0343a; --violet: #7c5cd6;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0f0f0e; --panel: #171716; --ink: #f2f1ee; --ink2: #c4c3bf; --muted: #8a8985;
+      --grid: #2a2927; --blue: #5b9be6; --orange: #f08a5d; --green: #4fb37d; --red: #f0605f; --violet: #a48bf0;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0f0f0e; --panel: #171716; --ink: #f2f1ee; --ink2: #c4c3bf; --muted: #8a8985;
+    --grid: #2a2927; --blue: #5b9be6; --orange: #f08a5d; --green: #4fb37d; --red: #f0605f; --violet: #a48bf0;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+    font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 1180px; margin: 0 auto; padding: 22px 16px 40px; }
+  h1 { font-size: 1.5rem; margin: 0 0 4px; font-weight: 650; }
+  .lead { color: var(--ink2); margin: 0 0 14px; max-width: 820px; }
+  .theme { float: right; font: inherit; font-size: 0.8rem; padding: 4px 10px; border-radius: 999px;
+    border: 1px solid var(--grid); background: var(--panel); color: var(--ink); cursor: pointer; }
+  .bar { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; margin: 10px 0; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  button.chip, button.act {
+    font: inherit; font-size: 0.88rem; padding: 6px 12px; border-radius: 999px; cursor: pointer;
+    border: 1px solid var(--grid); background: var(--panel); color: var(--ink);
+  }
+  button[aria-pressed="true"] { background: var(--blue); border-color: var(--blue); color: #fff; }
+  button:focus-visible, input:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+  .sliders { display: grid; grid-template-columns: repeat(4, minmax(150px, 1fr)); gap: 8px 16px; }
+  @media (max-width: 760px) { .sliders { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 520px) { .sliders { grid-template-columns: 1fr; } }
+  .tablewrap { overflow-x: auto; }
+  .sl { display: flex; align-items: center; gap: 8px; font-variant-numeric: tabular-nums; }
+  .sl input { flex: 1; min-width: 0; accent-color: var(--blue); }
+  .sl.bad b, .sl.bad { color: var(--red); } .sl.bad input { accent-color: var(--red); }
+  .alert { border: 1.5px solid var(--red); color: var(--red); border-radius: 10px; padding: 8px 12px;
+    margin: 0 0 12px; font-size: .9rem; background: color-mix(in srgb, var(--red) 8%, transparent); }
+  .alert[hidden] { display: none; }
+  tr.bad td { color: var(--red); font-weight: 600; }
+  .sl b { min-width: 2.2em; text-align: right; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 12px; }
+  @media (max-width: 820px) { .grid { grid-template-columns: 1fr; } }
+  .card { background: var(--panel); border: 1px solid var(--grid); border-radius: 12px; padding: 10px;
+    position: relative; }
+  .card h2 { font-size: 0.95rem; margin: 2px 4px 4px; font-weight: 600; color: var(--ink2); }
+  .card .hint { position: absolute; right: 12px; top: 10px; font-size: 0.75rem; color: var(--muted); }
+  canvas { width: 100%; aspect-ratio: 1 / 1; display: block; touch-action: none; cursor: grab; }
+  canvas:active { cursor: grabbing; }
+  .bandcard { margin-top: 14px; }
+  .bandcard .sub { color: var(--ink2); font-size: .86rem; margin: 0 4px 6px; max-width: 760px; }
+  #band { aspect-ratio: 16 / 5; cursor: default; }
+  @media (max-width: 640px) { #band { aspect-ratio: 4 / 3; } }
+  #speed { aspect-ratio: 16 / 5.2; cursor: default; }
+  .octagrid { display: grid; grid-template-columns: 1fr 1.25fr; gap: 12px; align-items: start; }
+  @media (max-width: 820px) { .octagrid { grid-template-columns: 1fr; } }
+  #delta { aspect-ratio: 5 / 4; cursor: default; }
+  .octabadges { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 8px 4px 2px; }
+  @media (max-width: 640px) { .octabadges { grid-template-columns: 1fr 1fr; } }
+  .octabadges div { border: 1px solid var(--grid); border-radius: 8px; padding: 6px 9px; font-variant-numeric: tabular-nums; }
+  .octabadges .k { color: var(--muted); font-size: 0.75rem; display: block; }
+  @media (max-width: 700px) { #speed { aspect-ratio: 3 / 4; } }
+  .badges { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .badge { border: 1px solid var(--grid); background: var(--panel); border-radius: 10px;
+    padding: 6px 10px; font-size: 0.88rem; }
+  .badge .k { color: var(--muted); font-size: 0.75rem; display: block; }
+  .fam { font-weight: 650; }
+  table { border-collapse: collapse; width: 100%; margin-top: 12px; font-variant-numeric: tabular-nums;
+    font-size: 0.9rem; }
+  th, td { padding: 6px 8px; border-bottom: 1px solid var(--grid); text-align: right; }
+  th:first-child, td:first-child { text-align: left; }
+  th { color: var(--muted); font-weight: 500; font-size: 0.8rem; }
+  .note { color: var(--ink2); font-size: 0.88rem; margin-top: 14px; max-width: 900px; }
+  code { font-size: 0.86em; }
+  a { color: var(--blue); }
+  .zoombtn { position: absolute; right: 8px; bottom: 8px; z-index: 2; font: inherit; font-size: 0.8rem;
+    padding: 3px 9px; border-radius: 999px; border: 1px solid var(--grid); background: var(--panel);
+    color: var(--ink); cursor: pointer; opacity: 0.85; }
+  .zoombtn:hover { opacity: 1; }
+  .card.full { position: fixed; inset: 10px; z-index: 50; overflow: auto; margin: 0;
+    box-shadow: 0 0 0 100vmax color-mix(in srgb, var(--bg) 85%, transparent); }
+  .card.full canvas { height: calc(100vh - 150px); aspect-ratio: auto; }
+  .card.full .octagrid canvas { height: calc(100vh - 260px); }
+  .card.full .sub { display: none; }
+  .dblgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 8px; }
+  @media (max-width: 820px) { .dblgrid { grid-template-columns: 1fr; } }
+  .dblpane h3 { font-size: 0.85rem; margin: 2px 4px 4px; font-weight: 600; color: var(--ink2); }
+  .minis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 6px; }
+  .minis canvas { border: 1px solid var(--grid); border-radius: 8px; aspect-ratio: 1 / 1; }
+  #dsum { aspect-ratio: 16 / 7; }
+  .minis.wide { grid-template-columns: repeat(8, 1fr); }
+  @media (max-width: 820px) { .minis.wide { grid-template-columns: repeat(4, 1fr); } #dsum { aspect-ratio: 1 / 1; } }
+  .card.full .minis canvas { height: auto; aspect-ratio: 1 / 1; }
+
+  .ledger { overflow-x: auto; border: 1px solid var(--grid); border-radius: 12px; background: var(--panel); margin: 8px 0; }
+  .ledger table { border-collapse: collapse; width: 100%; font-size: .88rem; }
+  .ledger th, .ledger td { text-align: left; vertical-align: top; padding: 8px 12px; border-bottom: 1px solid var(--grid); }
+  .ledger tr:last-child td { border-bottom: 0; } .ledger th { color: var(--ink2); font-weight: 620; }
+  .ledger code { font-size: .82em; overflow-wrap: anywhere; }
+  .figs { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+  .figs img { width: 100%; border: 1px solid var(--grid); border-radius: 10px; background: #fff; }
 </style>
 </head>
 <body>
-<div class="wrap">
-<header>
-  <span class="eyebrow">NRS³ · mosaic</span>
-  <h1>NRS³ Cube</h1>
-  <p>The open cube <code>Nx × Ny × Nz</code>: three path graphs, one conjugate pair <code>(T, P)</code> per axis, axes commuting. Each axis has its own <code>C_Nava(N)</code>; it is <code>1</code> only for <code>N = 2, 3</code>. The volumetric quantum is the product of the three excesses <code>δ = C_Nava − 1</code>.</p>
-  <p class="mut">Closed form (Physlib #1732): <code>Var H = 4t² sin²θ (N−1)/(N+1)</code>, <code>Var X = a²(((N+1)²+2)/12 − 1/(2 sin²θ))</code>, <code>θ = π/(N+1)</code>, and <code>C_Nava² = Var H · Var X / cos²θ</code> in units <code>a = t = 1</code>. Limit: <code>C∞ = √(π²/3 − 2)</code>.</p>
-</header>
+<main>
+  <button class="theme" id="theme" type="button" aria-label="Toggle dark mode">Theme</button>
+  <a class="theme" style="margin-right:8px;text-decoration:none" href="https://naype888-cloud.github.io/nava-robertson-schrodinger/robertson-det.html">Robertson 1934 in every basis ▸</a>
+  <a class="theme" style="margin-right:8px;text-decoration:none" href="https://naype888-cloud.github.io/nava-robertson-schrodinger/hopping.html">The hopping ▸</a>
+  <h1>NRS³ — every box has its star</h1>
+  <p class="lead">On the box <code>d<sub>x</sub> × d<sub>y</sub> × d<sub>z</sub></code> each axis carries the
+    pair transport <code>T</code> and position <code>P</code>. At the maximal current state of
+    the cube, the product of the maximal current states of the axes, their fluctuations open the angle
+    <code>θ<sub>NRS</sub>(d)</code>: zero only with 2 or 3 sites, never zero from 4 on. The quantum lives on boxes with
+    4 or more sites on every axis; an axis with 2 or 3 sites is marked in red. It runs on its own:
+    the transport bar fills once, then a new random box, 4 to 25 sites per axis, with transport moving Ψ and the view turning.
+    Change the box and the star deforms. Drag either panel to turn both.</p>
 
-<section class="controls" aria-label="Cube size">
-  <div class="row"><label for="nx">Nx</label><input id="nx" type="range" min="2" max="60" value="4"><span class="val" id="vx"></span></div>
-  <div class="row"><label for="ny">Ny</label><input id="ny" type="range" min="2" max="60" value="4"><span class="val" id="vy"></span></div>
-  <div class="row"><label for="nz">Nz</label><input id="nz" type="range" min="2" max="60" value="4"><span class="val" id="vz"></span></div>
-</section>
+  <div class="bar">
+    <div class="chips" role="group" aria-label="Boxes">
+      <button class="chip" type="button" data-box="4,4,4">4×4×4</button>
+      <button class="chip" type="button" data-box="10,10,10">10×10×10</button>
+      <button class="chip" type="button" data-box="4,10,10">4×10×10</button>
+      <button class="chip" type="button" data-box="4,7,10">4×7×10</button>
+      <button class="chip" type="button" data-box="3,8,14">3×8×14</button>
+      <button class="chip" type="button" data-box="2,2,2">2×2×2</button>
+      <button class="chip" type="button" id="random">🎲 Random</button>
+    </div>
+    <button class="act" type="button" id="tour" aria-pressed="false">✦ Tour</button>
+    <button class="act" type="button" id="play" aria-pressed="false">▶ Transport</button>
+    <button class="act" type="button" id="reset">t = 0</button>
+  </div>
+  <div class="sliders">
+    <label class="sl">d<sub>x</sub><input type="range" id="dx" min="2" max="25" value="4"><b id="vx">4</b></label>
+    <label class="sl">d<sub>y</sub><input type="range" id="dy" min="2" max="25" value="7"><b id="vy">7</b></label>
+    <label class="sl">d<sub>z</sub><input type="range" id="dz" min="2" max="25" value="10"><b id="vz">10</b></label>
+    <label class="sl">t<input type="range" id="tt" min="0" max="40" step="0.05" value="0"><b id="vt">0.0</b></label>
+  </div>
 
-<section class="readouts" id="ro" aria-live="polite"></section>
+  <div class="alert" id="alert" role="alert" hidden></div>
 
-<section class="plots">
-  <div class="plot"><svg id="p1" viewBox="0 0 520 300" role="img" aria-label="C_Nava against N"></svg><div class="cap">C_Nava(N) against N, with the Szegő limit C∞ (dashed). Your three axes are marked.</div></div>
-  <div class="plot"><svg id="p2" viewBox="0 0 520 300" role="img" aria-label="Volumetric quantum for a cubic box"></svg><div class="cap">Volumetric quantum δ(N)³ of the cube N × N × N, log scale; zero at N = 2, 3.</div></div>
-</section>
+  <div class="grid">
+    <div class="card"><h2>The box: Ψ on every site</h2><span class="hint">size |Ψ|² · colour phase</span>
+      <canvas id="box" aria-label="The lattice of the box with the state on every site, in 3D"></canvas></div>
+    <div class="card"><h2>The star of the box</h2><span class="hint">δT and δP of each axis</span>
+      <canvas id="star" aria-label="The star of fluctuation vectors of the three axes, in 3D"></canvas></div>
+  </div>
 
-<section>
-  <h2>Merged in Physlib</h2>
-  <div class="tw"><table>
-    <tr><th>PR</th><th>What</th><th>Lean</th></tr>
-    <tr><td><a href="https://github.com/leanprover-community/physlib/pull/1725">#1725</a></td><td>the open cube; axes commute; <code>C_Nava</code> per axis</td><td><code>nava_robertson_schrodinger_cube</code></td></tr>
-    <tr><td><a href="https://github.com/leanprover-community/physlib/pull/1739">#1739</a></td><td>Mandelstam–Tamm, Cramér–Rao per axis; ratio <code>1/C_Nava²</code></td><td><code>Cube/MandelstamTamm</code></td></tr>
-    <tr><td><a href="https://github.com/leanprover-community/physlib/pull/1730">#1730</a></td><td>Robertson 1934 for several observables</td><td><code>robertson_det</code></td></tr>
-    <tr><td><a href="https://github.com/leanprover-community/physlib/pull/1742">#1742</a></td><td>det|NRS³: six observables; strict from 4 × 4 × 4</td><td><code>robertson_det_cube</code>, <code>robertson_det_maxCurrentCubeState_strict</code></td></tr>
-    <tr><td><a href="https://github.com/leanprover-community/physlib/pull/1756">#1756</a></td><td>NRS angle and volumetric quantum</td><td><code>Cube/VolumetricQuantum</code></td></tr>
-    <tr><td><a href="https://github.com/leanprover-community/physlib/pull/1774">#1774</a></td><td>equality case of Robertson, several observables</td><td></td></tr>
-    <tr><td><a href="https://github.com/leanprover-community/physlib/pull/1745">#1745</a>, <a href="https://github.com/leanprover-community/physlib/pull/1746">#1746</a></td><td>velocity band and its width</td><td><code>VelocityBand</code></td></tr>
+  
+
+  <div class="card bandcard"><h2>The band of the quantum</h2>
+    <span class="hint"><label><input type="checkbox" id="showband" checked> show the band in the star</label></span>
+    <p class="sub">At the maximal current state of the cube every axis with 4 or more sites opens between θ<sub>NRS</sub>(4) and arccos(1/C<sub>∞</sub>), never on the
+      ceiling: the shape changes from box to box, the band does not. ○ θ<sub>NRS</sub>(d) at the maximal current state of the cube · ● θ at Ψ(t).
+      The page runs on its own: the transport bar fills once, then a new random box, 4 to 25 sites per axis, with transport on. Ψ(t) starts at the quantum
+      and leaves it; the band stays. Press Tour to stop on a box, Transport to pause.</p>
+    <canvas id="band" aria-label="The band of the quantum, one ruler per axis"></canvas></div>
+
+  <div class="card bandcard"><h2>The octahedron of the quantum (D25, D37e)</h2>
+    <span class="hint">drag to turn · dashed: d → ∞</span>
+    <p class="sub">Each axis with <code>d</code> sites carries the excess over saturation <code>δ(d) = C<sub>Nava</sub>(d) − 1</code>,
+      zero only with 2 or 3 sites (D25). Put a vertex at <code>±δ</code> on every axis: the octahedron of the box. The regular
+      <code>4 × 4 × 4</code> gives the smallest, <code>δ(4) ≈ 0.00848</code> on every axis; no box reaches the dashed one of
+      <code>d → ∞</code>, <code>δ<sub>∞</sub> = C<sub>∞</sub> − 1 ≈ 0.13572</code> on every axis. Its volume is
+      <code>(4/3)·𝒱</code>, with <code>𝒱 = δ(d<sub>x</sub>) δ(d<sub>y</sub>) δ(d<sub>z</sub>)</code> the volumetric quantum and
+      <code>δ(4)³ ≤ 𝒱 &lt; δ<sub>∞</sub>³</code> (D37e).</p>
+    <div class="octagrid">
+      <canvas id="octa" aria-label="The octahedron of the box, vertices at plus or minus delta on every axis, inside the one of d to infinity"></canvas>
+      <canvas id="delta" aria-label="The excess delta of d against the number of sites, with the three axes of the box"></canvas>
+    </div>
+    <div class="octabadges" aria-live="polite">
+      <div><span class="k">δ on x, y, z</span><span id="o-d">–</span></div>
+      <div><span class="k">𝒱 = δ<sub>x</sub>δ<sub>y</sub>δ<sub>z</sub></span><span id="o-v">–</span></div>
+      <div><span class="k">𝒱 / δ(4)³ (floor = 1)</span><span id="o-f">–</span></div>
+      <div><span class="k">𝒱 / δ<sub>∞</sub>³ (ceiling = 1, never)</span><span id="o-c">–</span></div>
+    </div></div>
+
+  <div class="card bandcard"><h2>Speed and the quantum (D44)</h2>
+    <span class="hint">|v(t)| against θ(t), one panel per axis</span>
+    <p class="sub">The speed of an axis is <code>v = ((d − 1)/2)·⟨K⟩</code>, <code>K = i[T, P]</code> (D38). Minimum
+      uncertainty (θ = 0) is possible only up to <code>v*(d)</code>; on the band <code>Ϙ(d) = (v*(d), 1]</code> every
+      state has a forced defect, and at the cone <code>v = 1</code> the angle is exactly the quantum
+      <code>θ<sub>NRS</sub>(d)</code>. Press Transport: Ψ(t) starts at the quantum and leaves it as it slows down.</p>
+    <canvas id="speed" aria-label="Speed against angle, with the velocity band of each axis"></canvas>
+    <p class="sub">Exact in Lean: <code>v*(4) = 3(√5 − 1)/4</code> (D23f, D23g, D43); the band is empty for 2 or 3
+      sites and non-empty from 4 on (D44); θ = θ<sub>NRS</sub>(d) at <code>v = 1</code> (D48). Numerical: <code>v*(d)</code>
+      for <code>d ≥ 5</code> and the dotted envelope (the smallest angle at each speed). The horizontal scale is
+      stretched above <code>v = 0.9</code>.</p></div>
+
+  
+
+  <div class="badges" aria-live="polite">
+    <div class="badge"><span class="k">family (D37i)</span><span class="fam" id="b-fam">–</span></div>
+    <div class="badge"><span class="k">orbit under axis permutations</span><span id="b-orb">–</span></div>
+    <div class="badge"><span class="k">signed permutations keeping every angle</span><span id="b-sym">–</span></div>
+    <div class="badge"><span class="k">the quantum</span><span id="b-q">–</span></div>
+  </div>
+
+  <div class="tablewrap"><table aria-label="Axis statistics">
+    <thead><tr><th>axis</th><th>sites</th><th>θ(t)</th><th>θ<sub>NRS</sub>(d) at t = 0</th>
+      <th>C<sub>Nava</sub> = 1/cos θ<sub>NRS</sub></th><th>σ<sub>T</sub></th><th>σ<sub>P</sub>(t)</th><th>⟨P⟩(t)</th></tr></thead>
+    <tbody id="rows"></tbody>
   </table></div>
-  <p class="mut" style="margin-top:10px">Full list: <a href="https://github.com/leanprover-community/physlib/pulls?q=is%3Apr+is%3Amerged+author%3Anaype888-cloud">merged pull requests</a> · base repository <a href="https://github.com/naype888-cloud/nava-robertson-schrodinger">nava-robertson-schrodinger</a> (<code>D37</code>–<code>D49t</code>).</p>
-</section>
 
-<section>
-  <h2>Figures</h2>
-  <div class="figs">
+  <p class="note">Exact in Lean (repository <a href="https://github.com/naype888-cloud/nava-robertson-schrodinger">nava-robertson-schrodinger</a>):
+    the angle is <code>angleG = arccos(‖⟨δT, δP⟩‖ / (σ<sub>T</sub> σ<sub>P</sub>))</code>, the same formula as here, with <code>cos θ<sub>NRS</sub>(d) = 1/C<sub>Nava</sub>(d)</code> and <code>θ<sub>NRS</sub>(d) = 0 ⇔ d ∈ {2, 3}</code> (D37b); the band <code>θ<sub>NRS</sub>(4) ≤ θ<sub>NRS</sub>(d) < arccos(1/C<sub>∞</sub>)</code>, <code>C<sub>∞</sub> = √(π²/3 − 2)</code>, holds at the maximal current state of the cube and at its 48 images under turns and reflections (<code>angleNRS_spectrum_bounds</code>, D48; <code>octahedral_symmetry</code>, D37h), not at Ψ(t) under transport (<code>angleAxis</code> at any state);
+    at the maximal current state of the cube each axis has its own angle and the axes commute (D37, D37h); the three families, orbits of 1, 3, 6
+    boxes and 48, 16, 8 angle-keeping symmetries, and the quantum is never erased from 4 sites on (D37i);
+    transport spreads at most one site per step (D37f). The numbers on this page are computed in your browser
+    from the same matrices (T = path adjacency / ρ<sub>d</sub>, P = centred position); the star is drawn
+    schematically, one axis per direction, with the true angles and lengths; the hull is its convex envelope.</p>
+
+  <div class="card bandcard" id="merged"><h2>Merged in Physlib</h2>
+    <span class="hint">what the page shows, with its Lean name</span>
+    <div class="ledger"><table><tr><th>PR</th><th>What</th><th>Lean</th></tr><tr><td><a href="https://github.com/leanprover-community/physlib/pull/1725">#1725</a></td><td>the open cube; axes commute; one <code>C</code> per axis</td><td><code>bracket_alongX_alongY</code>, <code>uncertaintyRatio_alongX</code>, <code>robertson_schrodinger_cube</code></td></tr><tr><td><a href="https://github.com/leanprover-community/physlib/pull/1742">#1742</a></td><td>det|NRS³|: six observables, <code>Ω</code> and <code>Σ</code> block diagonal; strict from 4 × 4 × 4</td><td><code>robertson_det_cube</code>, <code>det_covarianceMatrix_maxCurrentCubeState</code>, <code>robertson_det_maxCurrentCubeState_strict</code></td></tr><tr><td><a href="https://github.com/leanprover-community/physlib/pull/1756">#1756</a></td><td>the volumetric quantum δ(Nx)δ(Ny)δ(Nz): zero iff some axis has 2 or 3 sites, positive from 4 × 4 × 4</td><td><code>volQuantum_eq_zero_iff</code>, <code>volQuantum_pos</code></td></tr><tr><td><a href="https://github.com/leanprover-community/physlib/pull/1739">#1739</a></td><td>Mandelstam–Tamm and Cramér–Rao per axis</td><td><code>Cube/MandelstamTamm</code></td></tr><tr><td><a href="https://github.com/leanprover-community/physlib/pull/1730">#1730</a></td><td>Robertson 1934 for several observables</td><td><code>robertson_det</code></td></tr><tr><td><a href="https://github.com/leanprover-community/physlib/pull/1774">#1774</a></td><td>equality case of Robertson, several observables</td><td></td></tr><tr><td><a href="https://github.com/leanprover-community/physlib/pull/1718">#1718</a></td><td>one axis: equality iff N = 2, 3; strict from N = 4</td><td><code>centeredGramDefect_maxCurrentState_eq_zero_iff</code>, <code>robertson_schrodinger_maxCurrentState_lt</code></td></tr><tr><td><a href="https://github.com/leanprover-community/physlib/pull/1723">#1723</a></td><td>C = 1 iff N = 2, 3; C &gt; 1 strictly for every N ≥ 4</td><td><code>uncertaintyRatio_eq_one_iff</code>, <code>one_lt_uncertaintyRatio</code></td></tr><tr><td><a href="https://github.com/leanprover-community/physlib/pull/1732">#1732</a></td><td>closed form of C² with θ = π/(N+1)</td><td><code>uncertaintyRatio_sq_eq</code></td></tr><tr><td><a href="https://github.com/leanprover-community/physlib/pull/1735">#1735</a></td><td>C strictly increasing from N = 4 (Taylor bounds and Bernstein polynomials), always below C∞</td><td><code>uncertaintyRatio_lt_uncertaintyRatio</code>, <code>uncertaintyRatio_lt_sqrt_pi_sq_div_three_sub_two</code></td></tr><tr><td><a href="https://github.com/leanprover-community/physlib/pull/1734">#1734</a></td><td>the limit as N → ∞: C → C∞ = √(π²/3 − 2) (Szegő), never reached</td><td><code>tendsto_uncertaintyRatio</code></td></tr><tr><td><a href="https://github.com/leanprover-community/physlib/pull/1745">#1745</a>, <a href="https://github.com/leanprover-community/physlib/pull/1746">#1746</a></td><td>velocity band and its width</td><td><code>VelocityBand</code></td></tr></table></div>
+    <p class="note">The asymptotic chain, in Lean: <code>C(N) = 1</code> only for <code>N = 2, 3</code> (equality); <code>C(N) &gt; 1</code> strictly for every <code>N ≥ 4</code>;
+      <code>C</code> strictly increasing in <code>N</code>; <code>C(N) &lt; C<sub>∞</sub></code> for every <code>N</code>, and <code>C(N) → C<sub>∞</sub></code>. The limit is approached and never reached,
+      so the quantum <code>δ = C − 1</code> never closes. Full list: <a href="https://github.com/leanprover-community/physlib/pulls?q=is%3Apr+is%3Amerged+author%3Anaype888-cloud">merged pull requests</a>.</p>
+  </div>
+  <div class="card bandcard"><h2>Figures</h2><div class="figs">
     <img src="figures/nrs3_star_4x4x4.png" alt="Star of the 4 by 4 by 4 cube">
     <img src="figures/nrs3_pythagoras.png" alt="Pythagoras on the cube">
     <img src="figures/nrs3_volumetric_quantum.png" alt="Volumetric quantum">
     <img src="figures/nrs3_light_cone.png" alt="Light cone">
     <img src="figures/nrs3_octahedron_hd.png" alt="Octahedron">
-  </div>
-</section>
-
-<p class="mut">Neighbours: <a href="https://naype888-cloud.github.io/nrs3-hopf/">nrs3-hopf</a> · <a href="https://naype888-cloud.github.io/nrs3-uncertainty-cone/">nrs3-uncertainty-cone</a> · <a href="https://naype888-cloud.github.io/nrs3-dark/">nrs3-dark</a> · <a href="https://naype888-cloud.github.io/nava-robertson-schrodinger/">base page</a></p>
-</div>
-<script>
-const CINF = Math.sqrt(Math.PI ** 2 / 3 - 2);
-function C(N) {
-  const th = Math.PI / (N + 1), s = Math.sin(th);
-  const vh = 4 * s * s * (N - 1) / (N + 1);
-  const vx = ((N + 1) ** 2 + 2) / 12 - 1 / (2 * s * s);
-  return N <= 3 ? 1 : Math.sqrt(vh * vx) / Math.cos(th);
-}
-const $ = id => document.getElementById(id);
-const fmt = (x, d = 5) => x === 0 ? "0" : (Math.abs(x) < 1e-4 ? x.toExponential(3) : x.toFixed(d));
-function svgPlot(el, pts, opts) {
-  const W = 520, H = 300, L = 48, R = 12, T = 12, B = 30;
-  const xs = pts.map(p => p[0]), ys = pts.map(p => p[1]);
-  const x0 = Math.min(...xs), x1 = Math.max(...xs);
-  const y0 = opts.y0, y1 = opts.y1;
-  const X = x => L + (x - x0) / (x1 - x0) * (W - L - R);
-  const Y = y => H - B - (y - y0) / (y1 - y0) * (H - T - B);
-  let s = `<line x1="${L}" y1="${H - B}" x2="${W - R}" y2="${H - B}" stroke="currentColor" opacity=".3"/><line x1="${L}" y1="${T}" x2="${L}" y2="${H - B}" stroke="currentColor" opacity=".3"/>`;
-  s += `<polyline fill="none" stroke="var(--accent)" stroke-width="2" points="${pts.map(p => X(p[0]) + "," + Y(p[1])).join(" ")}"/>`;
-  (opts.hlines || []).forEach(h => { s += `<line x1="${L}" x2="${W - R}" y1="${Y(h.y)}" y2="${Y(h.y)}" stroke="var(--ok)" stroke-dasharray="5 4"/><text x="${W - R - 4}" y="${Y(h.y) - 4}" text-anchor="end">${h.label}</text>`; });
-  (opts.marks || []).forEach(m => { s += `<circle cx="${X(m[0])}" cy="${Y(m[1])}" r="5" fill="var(--warm)"/><text x="${X(m[0])}" y="${Y(m[1]) - 9}" text-anchor="middle">${m[2]}</text>`; });
-  s += `<text x="${L}" y="${H - 10}">${x0}</text><text x="${W - R}" y="${H - 10}" text-anchor="end">${x1}</text><text x="${L - 6}" y="${Y(y0)}" text-anchor="end">${opts.fy(y0)}</text><text x="${L - 6}" y="${Y(y1) + 8}" text-anchor="end">${opts.fy(y1)}</text>`;
-  el.innerHTML = s;
-}
-function update() {
-  const N = [+$("nx").value, +$("ny").value, +$("nz").value];
-  ["x", "y", "z"].forEach((a, i) => $("v" + a).textContent = "N = " + N[i]);
-  const c = N.map(C), d = c.map(v => Math.max(0, v - 1));
-  const V = d[0] * d[1] * d[2];
-  const th = c.map(v => Math.acos(Math.min(1, 1 / v)) * 180 / Math.PI);
-  const sat = N.map(n => n <= 3);
-  const cell = (k, v, u, cls = "") => `<div class="ro ${cls}"><span class="k">${k}</span><span class="v">${v}</span><span class="u">${u}</span></div>`;
-  $("ro").innerHTML =
-    cell("C_Nava per axis", c.map(v => v.toFixed(4)).join(" · "), "x · y · z") +
-    cell("δ = C − 1", d.map(v => fmt(v, 4)).join(" · "), "excess per axis") +
-    cell("NRS angle θ", th.map(v => v.toFixed(3) + "°").join(" · "), "arccos(1/C)") +
-    cell("volumetric quantum", fmt(V), "δx δy δz", V > 0 ? "hot" : "ok") +
-    cell("saturated axes", sat.map(s => s ? "yes" : "no").join(" · "), "equality iff N = 2, 3", sat.every(Boolean) ? "ok" : "") +
-    cell("strict det|NRS³", N.every(n => n >= 4) ? "yes" : "no", "from 4 × 4 × 4 (#1742)", N.every(n => n >= 4) ? "hot" : "");
-  const Nmax = 60, pts = [];
-  for (let n = 2; n <= Nmax; n++) pts.push([n, C(n)]);
-  svgPlot($("p1"), pts, { y0: 1, y1: 1.15, fy: v => v.toFixed(2), hlines: [{ y: CINF, label: "C∞ = " + CINF.toFixed(4) }], marks: N.map((n, i) => [n, C(n), "xyz"[i]]) });
-  const p2 = []; for (let n = 2; n <= Nmax; n++) p2.push([n, Math.log10(Math.max((C(n) - 1) ** 3, 1e-12))]);
-  svgPlot($("p2"), p2, { y0: -12, y1: -2, fy: v => "1e" + v, marks: [[N[0], Math.log10(Math.max((C(N[0]) - 1) ** 3, 1e-12)), "x"]] });
-}
-["nx", "ny", "nz"].forEach(id => $(id).addEventListener("input", update));
-update();
-</script>
+  </div></div>
+</main>
+<script src="nrs3-speed-data.js?v=20261025b"></script>
+<script src="nrs3-draw.js?v=20261025b"></script>
+<script src="nrs3-box.js?v=20261025b"></script>
 </body>
 </html>
