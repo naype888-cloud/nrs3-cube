@@ -1,14 +1,14 @@
-# NRS³ · Cube: the open cube of three path graphs, and everything Physlib merged about it
+# RS^N³ · Cube: the open cube of three path graphs, and everything Physlib merged about it
 
-NRS is the Robertson–Schrödinger inequality for the pair `(T_d, P_d)` on a path graph of `d`
-sites. **NRS³** is its extension to the Cartesian product of three path graphs, the open cube
+RS^N is the Robertson–Schrödinger inequality for the pair `(T_d, P_d)` on a path graph of `d`
+sites. **RS^N³** is its extension to the Cartesian product of three path graphs, the open cube
 `Nx × Ny × Nz`, with one such pair per axis. The axes commute; each axis carries its own
-`C_Nava(N)`, equal to `1` exactly for `N = 2, 3` and above `1` from `N = 4`; the volumetric
-quantum `δ(Nx) δ(Ny) δ(Nz)` is the product of the three excesses `δ = C_Nava − 1`.
+`C_N`, equal to `1` exactly for `N = 2, 3` and above `1` from `N = 4`; the volumetric
+quantum `δ(Nx) δ(Ny) δ(Nz)` is the product of the three excesses `δ = C_N − 1`.
 This repository is the index of that cube: the merged pull requests, the Lean names, the pages
 and the figures, in one place. It adds no new theorem.
 
-**[▶ Try it: set Nx, Ny, Nz and read C_Nava, δ, the NRS angle and the volumetric quantum of the cube](https://naype888-cloud.github.io/nrs3-cube/)**
+**[▶ Try it: set Nx, Ny, Nz and read C_N, δ, the RS^N angle and the volumetric quantum of the cube](https://naype888-cloud.github.io/nrs3-cube/)**
 
 ## Merged in Physlib (`PhyslibAlpha/CondensedMatter/TightBindingChain/Cube/`)
 
@@ -16,11 +16,11 @@ and the figures, in one place. It adds no new theorem.
 |---|---|---|---|
 | [#1699](https://github.com/leanprover-community/physlib/pull/1699) | 10-02 | operators on one coordinate of a product commute across coordinates | `FiniteTarget/Product` |
 | [#1717](https://github.com/leanprover-community/physlib/pull/1717) | 10-02 | product states: one-coordinate statistics are the factor's | `FiniteTarget/ProductState` |
-| [#1725](https://github.com/leanprover-community/physlib/pull/1725) | 10-05 | the open cube; axes commute; `C_Nava` per axis | `nava_robertson_schrodinger_cube` |
-| [#1739](https://github.com/leanprover-community/physlib/pull/1739) | 10-07 | Mandelstam–Tamm and Cramér–Rao per axis; ratio `1/C_Nava²` | `Cube/MandelstamTamm` |
+| [#1725](https://github.com/leanprover-community/physlib/pull/1725) | 10-05 | the open cube; axes commute; `C_N` per axis | `nava_robertson_schrodinger_cube` |
+| [#1739](https://github.com/leanprover-community/physlib/pull/1739) | 10-07 | Mandelstam–Tamm and Cramér–Rao per axis; ratio `1/C_N²` | `Cube/MandelstamTamm` |
 | [#1730](https://github.com/leanprover-community/physlib/pull/1730) | 10-06 | Robertson 1934 for several observables | `robertson_det` |
-| [#1742](https://github.com/leanprover-community/physlib/pull/1742) | 10-08 | det\|NRS³: six observables, `Ω` block diagonal; strict from `4 × 4 × 4` | `robertson_det_cube`, `robertson_det_maxCurrentCubeState_strict` |
-| [#1756](https://github.com/leanprover-community/physlib/pull/1756) | 10-12 | NRS angle `θ = arccos(1/C_Nava)` and the volumetric quantum | `Cube/VolumetricQuantum` |
+| [#1742](https://github.com/leanprover-community/physlib/pull/1742) | 10-08 | det\|RS^N³: six observables, `Ω` block diagonal; strict from `4 × 4 × 4` | `robertson_det_cube`, `robertson_det_maxCurrentCubeState_strict` |
+| [#1756](https://github.com/leanprover-community/physlib/pull/1756) | 10-12 | RS^N angle `θ = arccos(1/C_N)` and the volumetric quantum | `Cube/VolumetricQuantum` |
 | [#1774](https://github.com/leanprover-community/physlib/pull/1774) | 10-14 | equality case of Robertson for several observables | |
 | [#1745](https://github.com/leanprover-community/physlib/pull/1745), [#1746](https://github.com/leanprover-community/physlib/pull/1746) | 10-08, 10-13 | velocity band of forced uncertainty and its width | `VelocityBand` |
 
@@ -34,7 +34,7 @@ in the base repository. The full list:
 ## Lean in the base repository
 
 [`nava-robertson-schrodinger`](https://github.com/naype888-cloud/nava-robertson-schrodinger):
-`NavaRobertsonIndependent/Mathematics/` `D37` (cube), `D37b` NRS angle, `D37c` cube spectrum,
+`NavaRobertsonIndependent/Mathematics/` `D37` (cube), `D37b` RS^N angle, `D37c` cube spectrum,
 `D37d` cube Pythagoras, `D37e` volumetric quantum, `D37f` light cone, `D37g` Lieb–Robinson,
 `D37h` octahedral symmetry, `D37i` box families, `D39`, `D49`, `D49b`, `D49c`; and
 `NavaRobertsonCertificados/` `D43`–`D46`, `D49d`–`D49t`. Details:
